@@ -30,7 +30,7 @@ d <- data.frame(matrix(NA, nrow=length(input), ncol=1))
 # would need to reflect that. 
 colnames(d) <- "RCP45"
 
-# In a loop, take the mean value of each raster under the shapefile and then round it to a whole number. 
+# In a loop, take the mean value of each raster under the shapefile and then round it to one digit after the decimal. 
 # The value is then placed into the data frame, d, and each file is counted after the loop executes on it. 
 for(i in 1:length(input)){
 	r <- raster(input[i])
