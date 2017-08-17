@@ -2,10 +2,9 @@
 # inputs should consist of 9 files from decades 2010-2090 from either a single month, DOF/DOT, or LOGS. It will compute
 # the mean value of each raster under the specified shapefile extent and output to a csv file.
 
-# Name of output data column, i.e. RCP45, RCP60, etc.
-column_name <- "RCP60"
-
-# Load the raster library
+# Install and load the raster library. During installation the user will be asked to choose a CRAN repository. Either the 
+# cloud or one of the US repos are good. 
+install.packages("raster")
 library(raster)
 
 # Load the path to the data. R needs to have file paths written with forward slashes instead of backslashes. So, if you're copying a location from a Windows environment
@@ -19,7 +18,10 @@ geotiff_data_path <- "./data"
 shp <- shapefile("./Kenai_StudyArea.shp")
 
 # If the shapefile was in the wrong projection the following line could be used to re-project it to NAD83 Alaska Albers using a proj4 string.
-shp <- spTransform(shp, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+shp <- spTransform(shp, "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs")
+
+# Name of output data column, i.e. RCP45, RCP60, etc.
+rcp <- "RCP60"
 
 # List the .tif files in the directory. For this script to work correctly, the climate data should be the only .tif files in the folder.
 input <- list.files(geotiff_data_path, pattern=".tif$", full.names=T, recursive=F)
@@ -29,9 +31,9 @@ input <- list.files(geotiff_data_path, pattern=".tif$", full.names=T, recursive=
 # with real data in the next couple of steps.
 d <- data.frame(matrix(NA, nrow=length(input), ncol=1))
 
-# Label the column with the correct RCP. Again, RCP 4.5 is the example here, but if using rasters from a different RCP then this line
+# Label the column with the correct RCP. RCP 6.0 is the example here and it was defined in line 6, but if using rasters from a different RCP then this line
 # would need to reflect that.
-colnames(d) <- column_name
+colnames(d) <- rcp
 
 # In a loop, take the mean value of each raster under the shapefile and then round it to one digit after the decimal.
 # The value is then placed into the data frame, d, and each file is counted after the loop executes on it.
